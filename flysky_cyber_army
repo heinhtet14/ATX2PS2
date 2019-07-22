@@ -1,0 +1,162 @@
+#include<Servo.h>
+int channel2= 2;
+int channel4=4;
+int channel5=5;
+Servo ss;
+
+int mapValueFor;
+int mapValueBackward;
+int mot1=6;
+int mot2=9;
+
+int mot3=11;
+int mot4=10;
+
+void setup() {
+ pinMode(channel4,INPUT);
+ pinMode(channel2,INPUT);
+ pinMode(channel5,INPUT);
+ pinMode(mot1,OUTPUT);
+ pinMode(mot2,OUTPUT);
+ pinMode(mot3,OUTPUT);
+ pinMode(mot4,OUTPUT);
+ ss.attach(7);// put your setup code here, to run once:
+Serial.begin(9600);
+}
+
+void loop() {
+
+int  value2 = (pulseIn(channel2,HIGH));
+int  value4 = (pulseIn(channel4,HIGH));
+int  value5 = (pulseIn(channel5,HIGH));
+int  mapValue5 = map(value5,933,2088,0,120);
+   if(mapValue5<6){
+   // Serial.println("0");
+      }
+   else{
+  // Serial.println(mapValue5);
+    }
+  if(value2>1495 && value4>1480 && value4<1510){
+    int notMapValueForward = value2-1495;
+    
+    mapValueFor= map(notMapValueForward, 0, 484, 0,255);
+    if(mapValueFor>255){ mapValueFor=255;}
+    goFor(mapValueFor);
+    }
+    
+  if(value2<1465 && value4>1480 && value4<1510){
+    mapValueBackward= map(value2, 990, 1465, 0,255);
+    mapValueBackward =255 - mapValueBackward;
+    goBack(mapValueBackward);
+  }
+
+if(value4>1500 && value2>1480 && value2<1490){
+    int notMapValueRight = value4-1500;
+    int mapValueRight= map(notMapValueRight, 0, 490, 0,255);
+    right(mapValueRight);
+    }
+  if(value4<1465 && value2>1480 && value2<1490){
+    int mapValueLeft= map(value4, 995, 1465, 0,255);
+    mapValueLeft =255 - mapValueLeft;
+    left(mapValueLeft);
+  }
+
+   if (value2>1500 && value4>1500){        //For go and right
+    int notMapForRight1 = value2-1500;
+    int notMapForRight2 = value4-1500;
+    int mapForRight1 = map(notMapForRight1,0,480,0,150);
+    int mapForRight2 = map(notMapForRight2,0,490,0,255);
+    goForRight(mapForRight1, mapForRight2);
+  }
+  if (value2>1500 && value4<1460){        //For go and left
+    int mapForLeft1= map(value4,995,1500,0,255);
+    mapForLeft1 = 255 - mapForLeft1;
+    int notMapForLeft2= value2-1460;
+    int mapForLeft2 = map(notMapForLeft2,0,500,0,150);
+    goForLeft(mapForLeft1, mapForLeft2);
+  }
+  if (value2<1465 && value4>1500){
+    int mapBackRight1= map(value2, 995, 1465, 0,155);
+    mapBackRight1 =155 - mapBackRight1;
+    int notMapBackRight2= value4 - 1500;
+    int mapBackRight2= map(notMapBackRight2,0,500,0,255);
+    backRight(mapBackRight1, mapBackRight2);
+    }
+  if (value2<1465 && value4<1460){
+    int mapBackLeft1= map(value2, 995, 1465, 0,255);
+    mapBackLeft1 =255 - mapBackLeft1;
+    int mapBackLeft2= map(value4,995,1500,0,155);
+    mapBackLeft2 = 155 - mapBackLeft2;
+    backLeft(mapBackLeft1, mapBackLeft2);
+    }
+}
+void goFor(int mapValueFor){
+  analogWrite(mot1,mapValueFor);
+  analogWrite(mot2,0);
+  analogWrite(mot3,mapValueFor);
+  analogWrite(mot4,0);
+  Serial.println(mapValueFor);
+  }
+
+void goBack(int mapValueBackward){
+  analogWrite(mot1,0);
+  analogWrite(mot2,mapValueBackward);
+  analogWrite(mot3,0);
+  analogWrite(mot4,mapValueBackward);
+  Serial.print(mapValueBackward);
+  Serial.println("b");
+  }
+
+void left(int mapValueLeft){
+  analogWrite(mot1,mapValueLeft);
+  analogWrite(mot2,0);
+  analogWrite(mot3,0);
+  analogWrite(mot4,mapValueLeft);
+  Serial.print(mapValueLeft);
+  Serial.println("LEFT");
+  }
+
+void right(int mapValueRight){
+  analogWrite(mot1,0);
+  analogWrite(mot2,mapValueRight);
+  analogWrite(mot3,mapValueRight);
+  analogWrite(mot4,0);
+  Serial.print(mapValueRight);
+  Serial.println("RIGHT");
+  }
+void goForRight(int mapForRight1, int mapForRight2){
+  analogWrite(mot1,mapForRight1);
+  analogWrite(mot2,0);
+  analogWrite(mot3,mapForRight2);
+  analogWrite(mot4,0);
+  Serial.print(mapForRight2);
+  Serial.print("  " );
+  Serial.println(mapForRight1);
+  }
+void goForLeft(int mapForLeft1, int mapForLeft2){
+  analogWrite(mot1,mapForLeft1);
+  analogWrite(mot2,0);
+  analogWrite(mot3,mapForLeft2);
+  analogWrite(mot4,0);
+  Serial.print(mapForLeft2);
+  Serial.print("  " );
+  Serial.println(mapForLeft1);
+  }
+void backRight(int mapBackRight1, int mapBackRight2){
+  analogWrite(mot1,0);
+  analogWrite(mot2,mapBackRight1);
+  analogWrite(mot3,0);
+  analogWrite(mot4,mapBackRight2);
+  Serial.print(mapBackRight2);
+  Serial.print("  " );
+  Serial.println(mapBackRight1);
+  }
+void backLeft(int mapBackLeft1, int mapBackLeft2){
+  analogWrite(mot1,0);
+  analogWrite(mot2,mapBackLeft1);
+  analogWrite(mot3,0);
+  analogWrite(mot4,mapBackLeft2);
+  Serial.print(mapBackLeft2);
+  Serial.print("  " );
+  Serial.println(mapBackLeft1);
+  }
